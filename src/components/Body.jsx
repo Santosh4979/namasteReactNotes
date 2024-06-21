@@ -1,7 +1,7 @@
-import RestaurantCard from "./RestaurantCard";
+import RestaurantCard, { withPromotedLabel } from "./RestaurantCard";
 import { useState, useEffect } from "react";
 import Shimmerui from "./Shimmer";
-
+import { Link } from "react-router-dom";
 const Body = () => {
   const [restaurants, setRetaurants] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -14,6 +14,7 @@ const Body = () => {
     setRetaurants(topRatedRestaurants);
   };
 
+  const RestaunrantPromoted = withPromotedLabel(RestaurantCard);
   useEffect(() => {
     fetchData();
   }, []);
@@ -31,23 +32,29 @@ const Body = () => {
     restaurants?.length === 0 ? <Shimmerui /> :
     <>
       <div className="body">
-        <div className="filter">
-        <div className="search">
+        <div className="flex">
+        <div className="search m-4 p-4 flex items-center">
         <input
         type="text"
         placeholder="Search for restaurant, cuisine or a dish"
-        className="search-input"
+        className="border mx-4 border-solid  border-black"
         onChange={(e) => setSearchText(e.target.value)}
         ></input>
-        
+        <button id="search-btn" className="px-4 py-2 bg-green-100 rounded-lg" onClick={filterTopRated}>
+          Search
+        </button>
         </div>
-        <button id="filter-btn" className="filter-btn" onClick={filterTopRated}>
+        <button id="filter-btn" className="px-4 m-4 bg-gray-40 rounded-lg" onClick={filterTopRated}>
           Top Rated Restaurants
         </button>
         </div>
-        <div className="res-container">
+        <div className="flex flex-wrap m-4 p-4">
           {restaurants?.length >0 && restaurants.map((restaurant) => (
-            <RestaurantCard key={restaurant.id} restData={restaurant} />
+
+           
+           <Link to={`/restaurant/${restaurant.info.id}`} >
+          {restaurant?.info?.promoted ? <RestaunrantPromoted key={restaurant.info.id} restData={restaurant}/> : 
+           <RestaurantCard key={restaurant.info.id} restData={restaurant} />} </Link>
           ))}
         </div>
       </div>
